@@ -4,40 +4,33 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createStore } from 'redux';
-// react + redux
+import { Provider } from 'react-redux';
+// react-redux
 
 const reducer = (state, action) => {
   if (state === undefined) {
-    return 0;
+    return { n: 0, text: '一段文字' };
   }
   switch (action.type) {
     case 'add':
-      console.log('state', state);
-      return state + action.payload;
+      if (state.n + action.payload === 10) {
+        return { ...state, n: state.n + action.payload, text: '变更文字' };
+      }
+      return { ...state, n: state.n + action.payload };
     default:
-      return 0;
+      return state || { n: 0, text: '一段文字' };
   }
 };
 
 export const store = createStore(reducer);
 
-const render = (store) => {
-  ReactDOM.render(
+ReactDOM.render(
+  <Provider store={store}>
     <React.StrictMode>
-      <App value={store.getState()} />
-    </React.StrictMode>,
-    document.getElementById('root')
-  );
-};
+      <App />
+    </React.StrictMode>
+  </Provider>,
+  document.getElementById('root')
+);
 
-render(store);
-
-// 监听 state 变化就重新 render
-store.subscribe(() => {
-  render(store);
-});
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
